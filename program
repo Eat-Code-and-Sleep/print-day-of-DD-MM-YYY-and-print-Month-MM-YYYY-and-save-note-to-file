@@ -1,0 +1,138 @@
+/* A program to find day of a given date */
+#include<stdio.h>
+#include<string.h>
+#include <conio.h>
+#include<stdlib.h>
+int isLeapYear( int y ) /* True if leap year */
+{
+    return(y % 400 == 0) || ((y % 4 == 0) && (y % 100 != 0));
+}
+int leapYears( int y ) /* The number of leap year */
+{
+    return y/4 - y/100 + y/400;
+}
+int todayOf( int y, int m, int d) 
+{
+    static int DayOfMonth[] = 
+        { -1/*dummy*/,0,31,59,90,120,151,181,212,243,273,304,334};
+    return DayOfMonth[m] + d + ((m>2 && isLeapYear(y))? 1 : 0);
+}
+long days( int y, int m, int d) /* Total number of days */
+{
+    int lastYear;
+    lastYear = y - 1;
+    return 365L * lastYear + leapYears(lastYear) + todayOf(y,m,d);
+}
+void month_calander(int y, int m) // Displays Calendor of month and Year
+{
+    const char *NameOfMonth[] = { NULL,"January", "February", "March", "April", "May", "June","July", "August", "September", "October", "November", "December"};
+    char Week[] = "Su Mo Tu We Th Fr Sa";
+    int DayOfMonth[] = { -1,31,28,31,30,31,30,31,31,30,31,30,31 };
+    int weekOfTopDay;
+    int i,day;
+    weekOfTopDay = days(y, m, 1) % 7;
+    if( (y % 400 == 0) || ((y % 4 == 0) && (y % 100 != 0))) //
+    DayOfMonth[2] = 29;
+    printf("\n     %s %d\n%s\n", NameOfMonth[m], y, Week);
+
+    for(i=0;i<weekOfTopDay;i++)
+        printf("   ");
+    for(i=weekOfTopDay,day=1;day <= DayOfMonth[m];i++,day++){
+        printf("%2d ",day);
+        if(i % 7 == 6)
+            printf("\n");
+    }   
+    printf("\n");
+}
+
+int addnote() {
+    FILE *fptr;
+    char note[50]; 
+    char date[15];
+    fptr = fopen("note.txt", "w") ; 
+  printf("Enter Date: ");
+  scanf("%s",&date);
+  printf("\nEnter Note: ");
+  scanf("%s",&note);
+
+    if ( fptr == NULL ) 
+    { 
+        printf( "note.txt file failed to open." ) ; 
+    } 
+    else
+    { 
+        if ( strlen (  note  ) > 0 ) 
+        { 
+            fputs(date, fptr);
+            fputs("\t", fptr) ; 
+            fputs(note, fptr);
+            fputs("\n", fptr); 
+        } 
+        fclose(fptr) ; 
+          
+        printf(" Date and Note written to note.txt Successfully\n");
+    } 
+    return 0;
+}
+int dayofweek() 
+{ 
+	static int t[] = { 0, 3, 2, 5, 0, 3, 5, 1, 4, 6, 2, 4 }; 
+	int d,m,y,day_num;
+	
+	printf("Enter day Month and Year (DD/MM/YYYY): ");
+  scanf("%d/%d/%d",&d,&m,&y);
+	y -= m < 3; 
+	day_num = ( y + y/4 - y/100 + y/400 + t[m-1] + d) % 7;
+	
+	switch(day_num) { 
+    case 1: 
+        printf("Day is Monday"); 
+        break; 
+    case 2: 
+        printf("Day is Tuesday"); 
+        break; 
+    case 3: 
+        printf("Day is Wednesday"); 
+        break; 
+    case 4: 
+        printf("Day is Thursday"); 
+        break; 
+    case 5: 
+        printf("Day is Friday"); 
+        break; 
+    case 6: 
+        printf("Day is Saturday"); 
+        break; 
+    case 7: 
+        printf("Day is Sunday"); 
+        break; 
+    }
+    return 0;
+} 
+// Main Function
+int main() 
+{ 
+  int choice;
+  char day,c;
+  int month,year;
+  
+  again:
+  printf("\n1: Find out the Day\n2: Print All the days of Month\n3: Add a Note\n4: Exit\n");
+  printf("Enter Choice: ");
+  scanf("%d",&choice);
+  switch(choice) {
+    case 1: dayofweek();
+            break;
+   case 2: printf("Enter the month and year  (MM/YYYY): ");
+           scanf("%d/%d", &month, &year);
+           month_calander(year, month);
+           break;
+           
+    case 3: addnote();
+            break;
+    case 4: exit(1);
+  }
+    printf("\n");
+    goto again;
+    return 0;
+} 
